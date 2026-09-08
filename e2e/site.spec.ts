@@ -37,40 +37,70 @@ test("navigation and FAQ remain usable", async ({ page }) => {
   await expect(page.getByText(/consultoria atende decisões pontuais/i)).toBeVisible();
 });
 
-test("moves the realistic hero and switches all five miniatures", async ({ page }) => {
+test("loads, rotates and switches only the two optimized 3D miniatures", async ({ page }) => {
+  const modelRequests: string[] = [];
+  page.on("request", (request) => {
+    if (request.url().endsWith(".glb")) modelRequests.push(request.url());
+  });
+
   await page.goto("/");
   const hero = page.locator("#inicio");
-  await expect(page.getByText("Casa Pátio do Sertão", { exact: true })).toBeVisible();
+  await expect(page.getByText("Villa Jardim", { exact: true })).toBeVisible();
   await hero.screenshot({ path: `artifacts/${test.info().project.name}-miniatures.png` });
 
-  const stage = hero.locator(".showcase-stage");
-  const model = stage.locator(".showcase-model");
-  const initialTransform = await model.evaluate(
-    (element) => getComputedStyle(element).transform,
+  const viewer = hero.locator("model-viewer");
+  await expect
+    .poll(() => viewer.evaluate((element) => (element as HTMLElement & { src: string }).src))
+    .toMatch(/garden-villa\.glb$/);
+  await expect(hero.locator(".showcase-viewer-shell")).toHaveClass(/is-loaded/, {
+    timeout: 20_000,
+  });
+  await hero.screenshot({
+    path: `artifacts/${test.info().project.name}-3d-villa-loaded.png`,
+  });
+  expect(modelRequests.some((url) => url.endsWith("garden-villa.glb"))).toBe(true);
+  expect(modelRequests.some((url) => url.endsWith("terrace-apartment.glb"))).toBe(false);
+
+  const initialOrbit = await viewer.evaluate(
+    (element) => (element as HTMLElement & { getCameraOrbit(): { theta: number } }).getCameraOrbit().theta,
   );
-  const bounds = await stage.boundingBox();
+  const bounds = await viewer.boundingBox();
   expect(bounds).not.toBeNull();
   if (bounds) {
-    await page.mouse.move(bounds.x + bounds.width * 0.75, bounds.y + bounds.height * 0.25);
+    await page.mouse.move(bounds.x + bounds.width * 0.65, bounds.y + bounds.height * 0.5);
+    await page.mouse.down();
+    await page.mouse.move(bounds.x + bounds.width * 0.35, bounds.y + bounds.height * 0.5, {
+      steps: 8,
+    });
+    await page.mouse.up();
     await expect
-      .poll(() => model.evaluate((element) => getComputedStyle(element).transform))
-      .not.toBe(initialTransform);
+      .poll(() =>
+        viewer.evaluate(
+          (element) =>
+            (element as HTMLElement & { getCameraOrbit(): { theta: number } }).getCameraOrbit().theta,
+        ),
+      )
+      .not.toBe(initialOrbit);
   }
 
-  const scenes = [
-    ["Fazenda", "Fazenda Boa Vista"],
-    ["Apartamento", "Apartamento Entre Luzes"],
-    ["Casa de praia", "Casa Duna"],
-    ["Casa na cidade", "Casa Urbana 08"],
-  ] as const;
-
-  for (const [tab, title] of scenes) {
-    await page.getByRole("tab", { name: new RegExp(tab, "i") }).click();
-    await expect(page.getByText(title, { exact: true })).toBeVisible();
-    await expect(hero.locator(".showcase-image")).toHaveJSProperty("complete", true);
-  }
+  await page.getByRole("tab", { name: /apartamento/i }).click();
+  await expect(page.getByText("Apartamento Terraço", { exact: true })).toBeVisible();
+  await expect
+    .poll(() =>
+      hero
+        .locator("model-viewer")
+        .evaluate((element) => (element as HTMLElement & { src: string }).src),
+    )
+    .toMatch(/terrace-apartment\.glb$/);
+  await expect(hero.locator(".showcase-viewer-shell")).toHaveClass(/is-loaded/, {
+    timeout: 20_000,
+  });
+  await hero.screenshot({
+    path: `artifacts/${test.info().project.name}-3d-apartment-loaded.png`,
+  });
+  expect(modelRequests.some((url) => url.endsWith("terrace-apartment.glb"))).toBe(true);
 
   await expect(
-    page.getByRole("img", { name: /render isométrico realista de casa na cidade/i }),
+    page.getByRole("img", { name: /maquete 3d interativa de apartamento terraço/i }),
   ).toBeVisible();
 });

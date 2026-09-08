@@ -644,17 +644,11 @@ em {
 .showcase-stage {
   align-items: center;
   align-self: stretch;
-  cursor: grab;
   display: flex;
   justify-content: center;
   min-height: 610px;
-  perspective: 1400px;
   position: relative;
-  touch-action: pan-y;
   z-index: 2;
-}
-.showcase-stage.is-dragging {
-  cursor: grabbing;
 }
 .showcase-shadow {
   background: radial-gradient(
@@ -668,8 +662,6 @@ em {
   height: 22%;
   left: 10%;
   position: absolute;
-  transform: translate3d(var(--shadow-x), var(--shadow-y), 0);
-  transition: transform 0.2s ease-out;
   width: 82%;
 }
 .showcase-float {
@@ -679,23 +671,58 @@ em {
 }
 .showcase-model {
   animation: miniature-arrive 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both;
-  transform: translate3d(var(--shift-x), var(--shift-y), 0)
-    rotateX(var(--rotate-x)) rotateY(var(--rotate-y));
-  transform-origin: 52% 62%;
-  transform-style: preserve-3d;
-  transition: transform 0.2s ease-out;
-  will-change: transform;
 }
-.showcase-stage.is-dragging .showcase-model,
-.showcase-stage.is-dragging .showcase-shadow {
-  transition-duration: 0.06s;
+.showcase-viewer-shell {
+  height: min(64vh, 680px);
+  min-height: 520px;
+  position: relative;
+  width: 100%;
 }
-.showcase-image {
+.showcase-poster {
   filter: drop-shadow(0 28px 34px rgba(0, 0, 0, 0.26));
-  height: auto;
+  height: 100%;
+  inset: 0;
+  object-fit: contain;
+  opacity: 1;
   pointer-events: none;
+  position: absolute;
+  transition: opacity 0.45s ease;
   user-select: none;
   width: 100%;
+}
+.showcase-viewer-shell.is-loaded .showcase-poster {
+  opacity: 0;
+}
+.showcase-viewer {
+  background: transparent;
+  display: block;
+  height: 100%;
+  opacity: 0;
+  outline: none;
+  position: relative;
+  transition: opacity 0.45s ease;
+  width: 100%;
+  --poster-color: transparent;
+  --progress-bar-color: #d1a278;
+  --progress-mask: transparent;
+}
+.showcase-viewer-shell.is-loaded .showcase-viewer {
+  opacity: 1;
+}
+.showcase-loading {
+  background: rgba(7, 30, 25, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 99px;
+  bottom: 1.25rem;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.55rem;
+  left: 50%;
+  letter-spacing: 0.12em;
+  padding: 0.65rem 0.85rem;
+  position: absolute;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+  white-space: nowrap;
 }
 .showcase-drag-hint {
   bottom: 3.5rem;
@@ -711,7 +738,7 @@ em {
   display: grid;
   grid-column: 1 / -1;
   grid-row: 2;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   position: relative;
   z-index: 5;
 }
@@ -801,12 +828,11 @@ em {
 @keyframes miniature-arrive {
   from {
     opacity: 0;
-    transform: translate3d(26px, 10px, 0) scale(0.96);
+    transform: translate3d(26px, 10px, 0) scale(0.97);
   }
   to {
     opacity: 1;
-    transform: translate3d(var(--shift-x), var(--shift-y), 0)
-      rotateX(var(--rotate-x)) rotateY(var(--rotate-y)) scale(1);
+    transform: translate3d(0, 0, 0) scale(1);
   }
 }
 
@@ -1135,6 +1161,10 @@ footer a {
   .showcase-float {
     width: min(96vw, 920px);
   }
+  .showcase-viewer-shell {
+    height: min(52vh, 540px);
+    min-height: 390px;
+  }
   .showcase-tabs {
     display: flex;
     grid-row: 3;
@@ -1281,6 +1311,14 @@ footer a {
   }
   .showcase-float {
     width: 104vw;
+  }
+  .showcase-viewer-shell {
+    height: 350px;
+    min-height: 350px;
+  }
+  .showcase-loading {
+    bottom: auto;
+    top: 0.4rem;
   }
   .showcase-arrows {
     bottom: 11.5rem;

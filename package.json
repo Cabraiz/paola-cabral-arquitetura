@@ -16,6 +16,7 @@
     "check": "npm run typecheck && npm run lint && npm run perf:assets && npm run build && npm run seo:check && npm run agent:check"
   },
   "dependencies": {
+    "@google/model-viewer": "^4.3.1",
     "@gsap/react": "^2.1.2",
     "bootstrap": "^5.3.8",
     "classnames": "^2.5.1",

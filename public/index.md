@@ -11,13 +11,10 @@
 
 ## Maquetes interativas
 
-O hero do site apresenta uma experiência 2.5D leve, sem WebGL ou download de modelos pesados. Cinco renders isométricos realistas e transparentes podem ser explorados com mouse, toque, teclado e controles visíveis:
+O hero do site apresenta duas maquetes 3D realistas, otimizadas para a web e exibidas sobre fundo transparente. Elas podem ser giradas e aproximadas com mouse, toque, teclado e controles visíveis; somente o modelo selecionado é carregado:
 
-- terreno de sítio
-- fazenda
-- apartamento
-- casa de praia
-- casa na cidade
+- Villa Jardim
+- Apartamento Terraço
 
 ## Abordagem
 

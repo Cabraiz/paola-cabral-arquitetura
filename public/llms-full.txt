@@ -8,7 +8,7 @@ O trabalho parte da escuta e considera contexto, rotina, clima, luz, ventilaçã
 
 ## Maquetes interativas
 
-O hero oferece renders isométricos realistas e transparentes de cinco contextos: sítio, fazenda, apartamento, casa de praia e casa na cidade. A experiência usa inclinação 2.5D por ponteiro e controles acessíveis, sem carregar um modelo 3D completo.
+O hero oferece duas maquetes 3D realistas e transparentes: Villa Jardim e Apartamento Terraço. A experiência permite girar e aproximar cada projeto com ponteiro, toque ou teclado e carrega somente o modelo selecionado para preservar o desempenho.
 
 ## Serviços
 

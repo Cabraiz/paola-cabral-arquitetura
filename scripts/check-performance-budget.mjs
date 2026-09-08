@@ -16,7 +16,13 @@ const imageExtensions = new Set([
 const maximumImageBytes = 600 * 1024;
 const maximumCoreBytes = 3 * 1024 * 1024;
 const maximumTotalBytes = 4.1 * 1024 * 1024;
+const maximumModelBytes = 2 * 1024 * 1024;
+const maximumModelsBytes = 3.5 * 1024 * 1024;
 const excludedFromPagePayload = new Set(["og.jpg"]);
+const modelFiles = [
+  "models/miniatures/garden-villa.glb",
+  "models/miniatures/terrace-apartment.glb",
+];
 const miniatureFiles = [
   "images/miniatures/sitio.webp",
   "images/miniatures/fazenda.webp",
@@ -67,6 +73,16 @@ const oversizedImages = images.filter(
   (image) => image.bytes > maximumImageBytes,
 );
 const transparencyErrors = [];
+const models = await Promise.all(
+  modelFiles.map(async (modelPath) => ({
+    bytes: (await stat(join(publicDirectory, modelPath))).size,
+    path: modelPath,
+  })),
+);
+const modelsBytes = models.reduce((total, model) => total + model.bytes, 0);
+const oversizedModels = models.filter(
+  (model) => model.bytes > maximumModelBytes,
+);
 
 for (const imagePath of miniatureFiles) {
   const absolutePath = join(publicDirectory, imagePath);
@@ -90,6 +106,8 @@ if (
   oversizedImages.length > 0 ||
   coreBytes > maximumCoreBytes ||
   totalBytes > maximumTotalBytes ||
+  oversizedModels.length > 0 ||
+  modelsBytes > maximumModelsBytes ||
   transparencyErrors.length > 0
 ) {
   for (const image of oversizedImages) {
@@ -110,6 +128,18 @@ if (
     );
   }
 
+  for (const model of oversizedModels) {
+    console.error(
+      `${model.path} ultrapassa o limite 3D: ${(model.bytes / 1024 / 1024).toFixed(2)} MB`,
+    );
+  }
+
+  if (modelsBytes > maximumModelsBytes) {
+    console.error(
+      `Os modelos 3D somam ${(modelsBytes / 1024 / 1024).toFixed(2)} MB; o limite é 3,5 MB.`,
+    );
+  }
+
   for (const imagePath of transparencyErrors) {
     console.error(`${imagePath} não possui transparência real nos cantos.`);
   }
@@ -117,6 +147,6 @@ if (
   process.exitCode = 1;
 } else {
   console.log(
-    `Orçamento aprovado: ${images.length} imagens, ${(coreBytes / 1024 / 1024).toFixed(2)} MB principais e ${(totalBytes / 1024 / 1024).toFixed(2)} MB com HQ de desktop.`,
+    `Orçamento aprovado: ${images.length} imagens, ${(coreBytes / 1024 / 1024).toFixed(2)} MB principais, ${(totalBytes / 1024 / 1024).toFixed(2)} MB com HQ de desktop e ${(modelsBytes / 1024 / 1024).toFixed(2)} MB em modelos 3D.`,
   );
 }

@@ -1,55 +1,38 @@
 "use client";
 
 import Image from "next/image";
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Miniature = {
   id: string;
   label: string;
   title: string;
   description: string;
-  image: string;
+  model: string;
+  poster: string;
+  cameraOrbit: string;
 };
 
 const miniatures: readonly Miniature[] = [
   {
-    id: "sitio",
-    label: "Sítio",
-    title: "Casa Pátio do Sertão",
-    description: "Pátio vivo, sombra generosa e natureza no centro da rotina.",
-    image: "/images/miniatures/sitio.webp",
-  },
-  {
-    id: "fazenda",
-    label: "Fazenda",
-    title: "Fazenda Boa Vista",
+    id: "villa-jardim",
+    label: "Casa jardim",
+    title: "Villa Jardim",
     description:
-      "Hospitalidade rural organizada ao redor de um grande terreiro.",
-    image: "/images/miniatures/fazenda.webp",
+      "Volumes contemporâneos, áreas abertas e paisagismo integrados em uma maquete 3D navegável.",
+    model: "/models/miniatures/garden-villa.glb",
+    poster: "/images/miniatures/cidade.webp",
+    cameraOrbit: "35deg 64deg 85%",
   },
   {
-    id: "apartamento",
+    id: "apartamento-terraco",
     label: "Apartamento",
-    title: "Apartamento Entre Luzes",
+    title: "Apartamento Terraço",
     description:
-      "Conforto urbano, circulação clara e ambientes que se conectam.",
-    image: "/images/miniatures/apartamento.webp",
-  },
-  {
-    id: "praia",
-    label: "Casa de praia",
-    title: "Casa Duna",
-    description:
-      "Leveza, ventilação e uma vida aberta para a paisagem costeira.",
-    image: "/images/miniatures/praia.webp",
-  },
-  {
-    id: "cidade",
-    label: "Casa na cidade",
-    title: "Casa Urbana 08",
-    description: "Um lote compacto transformado por luz, jardim e privacidade.",
-    image: "/images/miniatures/cidade.webp",
+      "Uma leitura completa da planta, dos ambientes e do terraço em uma maquete 3D interativa.",
+    model: "/models/miniatures/terrace-apartment.glb",
+    poster: "/images/miniatures/apartamento.webp",
+    cameraOrbit: "35deg 63deg 90%",
   },
 ] as const;
 
@@ -57,72 +40,70 @@ type MiniatureHeroProps = {
   basePath: string;
 };
 
+type ProgressEvent = CustomEvent<{ totalProgress: number }>;
+
 export function MiniatureHero({ basePath }: MiniatureHeroProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const draggingRef = useRef(false);
+  const [viewerAvailable, setViewerAvailable] = useState(false);
+  const [modelLoaded, setModelLoaded] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
+  const [viewerElement, setViewerElement] = useState<HTMLElement | null>(null);
   const scene = miniatures[activeIndex];
+
+  useEffect(() => {
+    let active = true;
+
+    import("@google/model-viewer")
+      .then(() => {
+        if (active) setViewerAvailable(true);
+      })
+      .catch(() => {
+        if (active) setViewerAvailable(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const viewer = viewerElement;
+    if (!viewer) return;
+
+    const handleLoad = () => {
+      setLoadProgress(1);
+      setModelLoaded(true);
+    };
+    const handleProgress = (event: Event) => {
+      setLoadProgress((event as ProgressEvent).detail.totalProgress);
+    };
+
+    viewer.addEventListener("load", handleLoad);
+    viewer.addEventListener("progress", handleProgress);
+
+    return () => {
+      viewer.removeEventListener("load", handleLoad);
+      viewer.removeEventListener("progress", handleProgress);
+    };
+  }, [viewerElement]);
 
   if (!scene) return null;
 
-  function updateTilt(event: ReactPointerEvent<HTMLDivElement>) {
-    const bounds = event.currentTarget.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - 0.5;
-    const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    const strength = draggingRef.current
-      ? event.pointerType === "touch"
-        ? 11
-        : 18
-      : 9;
-
-    stageRef.current?.style.setProperty("--rotate-x", `${y * -strength}deg`);
-    stageRef.current?.style.setProperty("--rotate-y", `${x * strength}deg`);
-    stageRef.current?.style.setProperty("--shift-x", `${x * 18}px`);
-    stageRef.current?.style.setProperty("--shift-y", `${y * 12}px`);
-    stageRef.current?.style.setProperty("--shadow-x", `${x * -26}px`);
-    stageRef.current?.style.setProperty("--shadow-y", `${y * -18}px`);
-  }
-
-  function resetTilt() {
-    draggingRef.current = false;
-    stageRef.current?.classList.remove("is-dragging");
-    stageRef.current?.style.setProperty("--rotate-x", "0deg");
-    stageRef.current?.style.setProperty("--rotate-y", "0deg");
-    stageRef.current?.style.setProperty("--shift-x", "0px");
-    stageRef.current?.style.setProperty("--shift-y", "0px");
-    stageRef.current?.style.setProperty("--shadow-x", "0px");
-    stageRef.current?.style.setProperty("--shadow-y", "0px");
-  }
-
-  function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    if (!event.isPrimary) return;
-    draggingRef.current = true;
-    event.currentTarget.setPointerCapture(event.pointerId);
-    stageRef.current?.classList.add("is-dragging");
-    updateTilt(event);
-  }
-
-  function endDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-      event.currentTarget.releasePointerCapture(event.pointerId);
-    }
-    resetTilt();
+  function selectMiniature(index: number) {
+    if (index === activeIndex) return;
+    setModelLoaded(false);
+    setLoadProgress(0);
+    setActiveIndex(index);
   }
 
   function step(direction: number) {
-    setActiveIndex(
-      (current) =>
-        (current + direction + miniatures.length) % miniatures.length,
+    selectMiniature(
+      (activeIndex + direction + miniatures.length) % miniatures.length,
     );
   }
 
   return (
-    <section
-      aria-labelledby="hero-title"
-      className="showcase-hero"
-      id="inicio"
-      style={{ "--scene-index": activeIndex } as CSSProperties}
-    >
+    <section aria-labelledby="hero-title" className="showcase-hero" id="inicio">
       <div className="showcase-aura" aria-hidden="true" />
 
       <div className="showcase-copy">
@@ -132,8 +113,9 @@ export function MiniatureHero({ basePath }: MiniatureHeroProps) {
           <br /> antes de <em>construir.</em>
         </h1>
         <p className="showcase-intro">
-          Cinco formas de morar apresentadas como maquetes realistas. Arraste
-          para sentir o volume e escolha um contexto para explorar.
+          Duas formas de morar apresentadas como maquetes 3D realistas. Arraste
+          para girar, aproxime para ver os detalhes e escolha um projeto para
+          explorar.
         </p>
         <div
           aria-live="polite"
@@ -147,36 +129,59 @@ export function MiniatureHero({ basePath }: MiniatureHeroProps) {
         </div>
       </div>
 
-      <div
-        className="showcase-stage"
-        onPointerCancel={endDrag}
-        onPointerDown={beginDrag}
-        onPointerLeave={resetTilt}
-        onPointerMove={updateTilt}
-        onPointerUp={endDrag}
-        ref={stageRef}
-      >
+      <div className="showcase-stage">
         <div className="showcase-shadow" aria-hidden="true" />
         <div className="showcase-float">
           <div className="showcase-model" key={scene.id}>
-            <Image
-              alt={`Render isométrico realista de ${scene.label.toLowerCase()}`}
-              className="showcase-image"
-              draggable={false}
-              height={853}
-              preload={activeIndex === 0}
-              src={`${basePath}${scene.image}`}
-              width={1280}
-            />
+            <div
+              className={`showcase-viewer-shell${modelLoaded ? " is-loaded" : ""}`}
+            >
+              <Image
+                alt=""
+                aria-hidden="true"
+                className="showcase-poster"
+                draggable={false}
+                height={853}
+                priority={activeIndex === 0}
+                src={`${basePath}${scene.poster}`}
+                width={1280}
+              />
+              {viewerAvailable ? (
+                <model-viewer
+                  alt={`Maquete 3D interativa de ${scene.title}`}
+                  auto-rotate
+                  auto-rotate-delay="2600"
+                  camera-controls
+                  camera-orbit={scene.cameraOrbit}
+                  className="showcase-viewer"
+                  environment-image="neutral"
+                  exposure="1.08"
+                  field-of-view="28deg"
+                  interaction-prompt="auto"
+                  loading="eager"
+                  ref={setViewerElement}
+                  rotation-per-second="10deg"
+                  shadow-intensity="0.72"
+                  shadow-softness="0.9"
+                  src={`${basePath}${scene.model}`}
+                  touch-action="pan-y"
+                />
+              ) : null}
+              {!modelLoaded ? (
+                <span className="showcase-loading" role="status">
+                  Carregando 3D · {Math.round(loadProgress * 100)}%
+                </span>
+              ) : null}
+            </div>
           </div>
         </div>
         <span className="showcase-drag-hint" aria-hidden="true">
-          Arraste para mover
+          Arraste para girar · aproxime para explorar
         </span>
       </div>
 
       <div
-        aria-label="Tipos de residência"
+        aria-label="Maquetes 3D disponíveis"
         className="showcase-tabs"
         role="tablist"
       >
@@ -186,7 +191,7 @@ export function MiniatureHero({ basePath }: MiniatureHeroProps) {
             aria-selected={index === activeIndex}
             className={index === activeIndex ? "active" : ""}
             key={item.id}
-            onClick={() => setActiveIndex(index)}
+            onClick={() => selectMiniature(index)}
             role="tab"
             type="button"
           >

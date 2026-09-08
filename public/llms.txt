@@ -14,7 +14,7 @@
 - Área: arquitetura e interiores
 - Base: Fortaleza, Ceará, Brasil
 - Serviços: arquitetura residencial, interiores, espaços comerciais e consultoria de projeto
-- Experiência: renders isométricos realistas no hero, com movimento 2.5D, para sítio, fazenda, apartamento, casa de praia e casa urbana
+- Experiência: duas maquetes 3D realistas no hero, Villa Jardim e Apartamento Terraço, com rotação e aproximação interativas
 - Contato: canal oficial em atualização
 
 ## Recursos técnicos
