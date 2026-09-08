@@ -66,11 +66,14 @@ export function MiniatureHero({ basePath }: MiniatureHeroProps) {
   if (!scene) return null;
 
   function updateTilt(event: ReactPointerEvent<HTMLDivElement>) {
-    if (event.pointerType === "touch") return;
     const bounds = event.currentTarget.getBoundingClientRect();
     const x = (event.clientX - bounds.left) / bounds.width - 0.5;
     const y = (event.clientY - bounds.top) / bounds.height - 0.5;
-    const strength = draggingRef.current ? 18 : 9;
+    const strength = draggingRef.current
+      ? event.pointerType === "touch"
+        ? 11
+        : 18
+      : 9;
 
     stageRef.current?.style.setProperty("--rotate-x", `${y * -strength}deg`);
     stageRef.current?.style.setProperty("--rotate-y", `${x * strength}deg`);
@@ -92,7 +95,7 @@ export function MiniatureHero({ basePath }: MiniatureHeroProps) {
   }
 
   function beginDrag(event: ReactPointerEvent<HTMLDivElement>) {
-    if (event.pointerType === "touch") return;
+    if (!event.isPrimary) return;
     draggingRef.current = true;
     event.currentTarget.setPointerCapture(event.pointerId);
     stageRef.current?.classList.add("is-dragging");
