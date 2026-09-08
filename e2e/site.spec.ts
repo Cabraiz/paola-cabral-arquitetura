@@ -8,14 +8,14 @@ test("renders the complete portfolio without broken assets or horizontal overflo
   });
 
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1, name: /espaços com essência/i })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: /imagine por inteiro/i })).toBeVisible();
   await expect(page.getByRole("heading", { name: /atmosferas que orientam/i })).toBeVisible();
   await expect(page.getByText("Não representam obras executadas.")).toBeVisible();
 
   const imageCount = await page.locator("img").count();
   expect(imageCount).toBe(4);
   for (const image of await page.locator("img").all()) {
-    await image.scrollIntoViewIfNeeded();
+    await image.evaluate((element) => element.scrollIntoView({ block: "center" }));
     await expect(image).toHaveJSProperty("complete", true);
     expect(await image.evaluate((element) => (element as HTMLImageElement).naturalWidth)).toBeGreaterThan(0);
   }
@@ -37,12 +37,25 @@ test("navigation and FAQ remain usable", async ({ page }) => {
   await expect(page.getByText(/consultoria atende decisões pontuais/i)).toBeVisible();
 });
 
-test("switches between all five pseudo 3D miniatures", async ({ page }) => {
+test("moves the realistic hero and switches all five miniatures", async ({ page }) => {
   await page.goto("/");
-  const explorer = page.locator("#maquetes");
-  await explorer.scrollIntoViewIfNeeded();
-  await expect(page.getByRole("heading", { name: "Casa Pátio do Sertão" })).toBeVisible();
-  await explorer.screenshot({ path: `artifacts/${test.info().project.name}-miniatures.png` });
+  const hero = page.locator("#inicio");
+  await expect(page.getByText("Casa Pátio do Sertão", { exact: true })).toBeVisible();
+  await hero.screenshot({ path: `artifacts/${test.info().project.name}-miniatures.png` });
+
+  const stage = hero.locator(".showcase-stage");
+  const model = stage.locator(".showcase-model");
+  const initialTransform = await model.evaluate(
+    (element) => getComputedStyle(element).transform,
+  );
+  const bounds = await stage.boundingBox();
+  expect(bounds).not.toBeNull();
+  if (bounds) {
+    await page.mouse.move(bounds.x + bounds.width * 0.75, bounds.y + bounds.height * 0.25);
+    await expect
+      .poll(() => model.evaluate((element) => getComputedStyle(element).transform))
+      .not.toBe(initialTransform);
+  }
 
   const scenes = [
     ["Fazenda", "Fazenda Boa Vista"],
@@ -53,8 +66,11 @@ test("switches between all five pseudo 3D miniatures", async ({ page }) => {
 
   for (const [tab, title] of scenes) {
     await page.getByRole("tab", { name: new RegExp(tab, "i") }).click();
-    await expect(page.getByRole("heading", { name: title })).toBeVisible();
+    await expect(page.getByText(title, { exact: true })).toBeVisible();
+    await expect(hero.locator(".showcase-image")).toHaveJSProperty("complete", true);
   }
 
-  await expect(page.getByRole("img", { name: /maquete pseudo 3d: casa na cidade/i })).toBeVisible();
+  await expect(
+    page.getByRole("img", { name: /render isométrico realista de casa na cidade/i }),
+  ).toBeVisible();
 });

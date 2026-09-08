@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Experience } from "./experience";
-import { MiniatureExplorer } from "./miniature-explorer";
+import { MiniatureHero } from "./miniature-explorer";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -77,7 +77,7 @@ export default function Home() {
           <span>CABRAL</span>
         </a>
         <nav aria-label="Navegação principal">
-          <a href="#maquetes">Maquetes</a>
+          <a href="#inicio">Maquetes</a>
           <a href="#servicos">Serviços</a>
           <a href="#sobre">Estúdio</a>
         </nav>
@@ -87,39 +87,7 @@ export default function Home() {
       </header>
 
       <main id="conteudo">
-        <section className="hero" id="inicio" aria-labelledby="hero-title">
-          <Image
-            alt="Estudo arquitetônico de residência contemporânea tropical ao entardecer"
-            className="hero-image"
-            height="1024"
-            loading="eager"
-            preload
-            src={`${basePath}/images/hero.webp`}
-            width="1820"
-          />
-          <div className="hero-shade" />
-          <div className="hero-content reveal">
-            <p className="eyebrow">
-              Arquitetura e interiores · Fortaleza, Ceará
-            </p>
-            <h1 id="hero-title">
-              Espaços com <em>essência,</em>
-              <br /> desenhados para durar.
-            </h1>
-            <p className="hero-intro">
-              Arquitetura contemporânea, sensível ao clima e à vida real.
-              Projetos que transformam intenção em pertencimento.
-            </p>
-            <a className="text-link light" href="#maquetes">
-              Explorar maquetes <span aria-hidden="true">↓</span>
-            </a>
-          </div>
-          <p className="hero-index" aria-hidden="true">
-            01 / 03
-          </p>
-        </section>
-
-        <MiniatureExplorer />
+        <MiniatureHero basePath={basePath} />
 
         <section
           className="manifesto section-pad"

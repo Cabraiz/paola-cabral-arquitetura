@@ -28,16 +28,6 @@ export function Experience({ children }: { children: ReactNode }) {
           },
         );
       });
-      gsap.to(".hero-image", {
-        scale: 1.08,
-        ease: "none",
-        scrollTrigger: {
-          trigger: ".hero",
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
     });
     return () => {
       context.revert();

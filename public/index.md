@@ -11,7 +11,7 @@
 
 ## Maquetes interativas
 
-O site apresenta uma experiência pseudo 3D leve, sem WebGL ou download de modelos pesados. Cinco estudos volumétricos podem ser explorados com mouse, toque, teclado e controles visíveis:
+O hero do site apresenta uma experiência 2.5D leve, sem WebGL ou download de modelos pesados. Cinco renders isométricos realistas e transparentes podem ser explorados com mouse, toque, teclado e controles visíveis:
 
 - terreno de sítio
 - fazenda
