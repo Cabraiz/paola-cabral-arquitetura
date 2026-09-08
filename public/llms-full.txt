@@ -6,6 +6,10 @@ Paola Cabral é o nome profissional de um estúdio de arquitetura e interiores c
 
 O trabalho parte da escuta e considera contexto, rotina, clima, luz, ventilação, conforto, identidade e durabilidade. O processo é apresentado em quatro etapas: escuta, estratégia, projeto e acompanhamento.
 
+## Maquetes interativas
+
+A primeira seção de conteúdo oferece estudos volumétricos pseudo 3D de cinco contextos: sítio, fazenda, apartamento, casa de praia e casa na cidade. A experiência usa geometria leve no navegador, inclinação por ponteiro e controles acessíveis, sem carregar um modelo 3D completo.
+
 ## Serviços
 
 1. Arquitetura residencial: casas e apartamentos pensados para a rotina, o clima e a identidade dos moradores.

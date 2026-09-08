@@ -14,6 +14,7 @@
 - Área: arquitetura e interiores
 - Base: Fortaleza, Ceará, Brasil
 - Serviços: arquitetura residencial, interiores, espaços comerciais e consultoria de projeto
+- Experiência: maquetes pseudo 3D interativas para sítio, fazenda, apartamento, casa de praia e casa urbana
 - Contato: canal oficial em atualização
 
 ## Recursos técnicos

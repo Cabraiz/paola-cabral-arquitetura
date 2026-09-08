@@ -34,6 +34,8 @@ for (const [signal, label] of [
   ["Arquitetura residencial", "serviço residencial"],
   ["Fortaleza", "localidade"],
   ["Não representam obras executadas", "transparência do portfólio"],
+  ["Cinco maneiras de imaginar o morar", "maquetes interativas"],
+  ["Casa de praia", "tipologia de praia"],
 ])
   expect(homepage, signal, label);
 

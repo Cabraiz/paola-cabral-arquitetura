@@ -29,6 +29,10 @@ const checks = [
     content["index.md"].includes("não representam obras executadas"),
   ],
   [
+    "markdown-miniatures",
+    content["index.md"].includes("## Maquetes interativas"),
+  ],
+  [
     "llms-summary",
     content["llms.txt"].includes("> Site oficial de Paola Cabral"),
   ],

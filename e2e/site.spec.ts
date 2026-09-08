@@ -36,3 +36,25 @@ test("navigation and FAQ remain usable", async ({ page }) => {
   await question.click();
   await expect(page.getByText(/consultoria atende decisões pontuais/i)).toBeVisible();
 });
+
+test("switches between all five pseudo 3D miniatures", async ({ page }) => {
+  await page.goto("/");
+  const explorer = page.locator("#maquetes");
+  await explorer.scrollIntoViewIfNeeded();
+  await expect(page.getByRole("heading", { name: "Casa Pátio do Sertão" })).toBeVisible();
+  await explorer.screenshot({ path: `artifacts/${test.info().project.name}-miniatures.png` });
+
+  const scenes = [
+    ["Fazenda", "Fazenda Boa Vista"],
+    ["Apartamento", "Apartamento Entre Luzes"],
+    ["Casa de praia", "Casa Duna"],
+    ["Casa na cidade", "Casa Urbana 08"],
+  ] as const;
+
+  for (const [tab, title] of scenes) {
+    await page.getByRole("tab", { name: new RegExp(tab, "i") }).click();
+    await expect(page.getByRole("heading", { name: title })).toBeVisible();
+  }
+
+  await expect(page.getByRole("img", { name: /maquete pseudo 3d: casa na cidade/i })).toBeVisible();
+});

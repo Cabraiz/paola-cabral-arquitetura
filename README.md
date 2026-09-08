@@ -2,6 +2,8 @@
 
 Site estático em Next.js para o estúdio Paola Cabral, com foco em arquitetura e interiores em Fortaleza.
 
+A abertura do portfólio inclui cinco maquetes pseudo 3D criadas com HTML/CSS e controles React. Não há WebGL, modelo externo ou renderização pesada.
+
 ## Desenvolvimento
 
 ```bash

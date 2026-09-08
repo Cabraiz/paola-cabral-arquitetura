@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Experience } from "./experience";
+import { MiniatureExplorer } from "./miniature-explorer";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
@@ -76,7 +77,7 @@ export default function Home() {
           <span>CABRAL</span>
         </a>
         <nav aria-label="Navegação principal">
-          <a href="#estudos">Portfólio</a>
+          <a href="#maquetes">Maquetes</a>
           <a href="#servicos">Serviços</a>
           <a href="#sobre">Estúdio</a>
         </nav>
@@ -109,14 +110,16 @@ export default function Home() {
               Arquitetura contemporânea, sensível ao clima e à vida real.
               Projetos que transformam intenção em pertencimento.
             </p>
-            <a className="text-link light" href="#estudos">
-              Conheça a abordagem <span aria-hidden="true">↓</span>
+            <a className="text-link light" href="#maquetes">
+              Explorar maquetes <span aria-hidden="true">↓</span>
             </a>
           </div>
           <p className="hero-index" aria-hidden="true">
             01 / 03
           </p>
         </section>
+
+        <MiniatureExplorer />
 
         <section
           className="manifesto section-pad"

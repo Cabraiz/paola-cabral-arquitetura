@@ -9,6 +9,16 @@
 - Espaços comerciais
 - Consultoria de projeto
 
+## Maquetes interativas
+
+O site apresenta uma experiência pseudo 3D leve, sem WebGL ou download de modelos pesados. Cinco estudos volumétricos podem ser explorados com mouse, toque, teclado e controles visíveis:
+
+- terreno de sítio
+- fazenda
+- apartamento
+- casa de praia
+- casa na cidade
+
 ## Abordagem
 
 Paola Cabral desenvolve projetos com atenção à rotina, ao clima, à luz natural, à ventilação, à materialidade e à durabilidade. O processo reúne escuta, estratégia, projeto e acompanhamento.
