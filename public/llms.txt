@@ -1,0 +1,23 @@
+# Paola Cabral Arquitetura
+
+> Site oficial de Paola Cabral, estúdio de arquitetura e interiores com base em Fortaleza, Ceará.
+
+## Conteúdo principal
+
+- [Página principal em Markdown](https://cabraiz.github.io/paola-cabral-arquitetura/index.md): atuação, abordagem, localização e transparência do portfólio.
+- [Conteúdo completo](https://cabraiz.github.io/paola-cabral-arquitetura/llms-full.txt): resumo consolidado para sistemas de IA.
+- [Experiência visual](https://cabraiz.github.io/paola-cabral-arquitetura/): site público oficial.
+
+## Dados essenciais
+
+- Nome: Paola Cabral
+- Área: arquitetura e interiores
+- Base: Fortaleza, Ceará, Brasil
+- Serviços: arquitetura residencial, interiores, espaços comerciais e consultoria de projeto
+- Contato: canal oficial em atualização
+
+## Recursos técnicos
+
+- [Sitemap](https://cabraiz.github.io/paola-cabral-arquitetura/sitemap.xml)
+- [Robots](https://cabraiz.github.io/paola-cabral-arquitetura/robots.txt)
+- [Relatório automatizado de prontidão](https://cabraiz.github.io/paola-cabral-arquitetura/agent-readiness.json)
